@@ -46,25 +46,23 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/button_prev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:drawableLeft="@drawable/arrow_left"
-            android:drawablePadding="4dp"
-            tools:ignore="ButtonStyle,RtlHardcoded"
-            android:text="@string/prev_question_button" />
+            android:contentDescription="@string/prev_question_button"
+            android:src="@drawable/arrow_left"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
 
-        <Button
+        <ImageButton
             android:id="@+id/button_next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
-            android:drawableRight="@drawable/arrow_right"
-            android:drawablePadding="4dp"
-            tools:ignore="ButtonStyle,RtlHardcoded"
-            android:text="@string/next_question_button" />
+            android:contentDescription="@string/next_question_button"
+            android:src="@drawable/arrow_right"
+            tools:ignore="ButtonStyle,RtlHardcoded" />
 
     </LinearLayout>
 
