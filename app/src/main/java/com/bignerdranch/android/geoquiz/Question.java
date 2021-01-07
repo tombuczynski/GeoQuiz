@@ -5,8 +5,8 @@ package com.bignerdranch.android.geoquiz;
  */
 public class Question {
 
-    private String mQuestionText;
-    private boolean mAnswerTrue;
+    private final String mQuestionText;
+    private final boolean mAnswerTrue;
 
     public String getQuestionText() {
         return mQuestionText;

@@ -1,28 +1,80 @@
 package com.bignerdranch.android.geoquiz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class QuizActivity extends AppCompatActivity {
+    private static final String TAG = "QuizActivity";
+    public static final String KEY_INDEX = "INDEX";
 
-    private Question[] mQuestions = new Question[0];
+    private Question[] mQuestions = null;
+    private byte[] mAnswers = null; // 0=no answer(default), 1=good answer, 2 = wrong answer
     private int mCurrentIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate: called, " + (savedInstanceState != null ? "savedInstanceState != null" : "savedInstanceState == null"));
+
         setContentView(R.layout.activity_quiz);
 
-        fillQuestionsTable();
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+        }
+
+        if (! fillQuestionsTable()) {
+            finish();
+        }
+
         buttonsHandler();
 
+
         questionUpdate();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: called");
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState: called");
+
+        outState.putInt(KEY_INDEX, mCurrentIndex);;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: called");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop: called");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: called");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: called");
     }
 
     private void questionUpdate() {
@@ -50,7 +102,7 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton buttonPrev = findViewById(R.id.button_prev);
+        View buttonPrev = findViewById(R.id.button_prev);
         buttonPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +110,7 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-        ImageButton buttonNext = findViewById(R.id.button_next);
+        View buttonNext = findViewById(R.id.button_next);
         buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,16 +149,25 @@ public class QuizActivity extends AppCompatActivity {
         questionUpdate();
     }
 
-    private void fillQuestionsTable() {
+    private boolean fillQuestionsTable() {
         String[] q_texts = getResources().getStringArray(R.array.question_texts);
         int[] q_answers = getResources().getIntArray(R.array.question_answers);
 
         if (q_texts.length == q_answers.length) {
             mQuestions = new Question[q_texts.length];
+            if (mAnswers == null) {
+                mAnswers = new byte[q_texts.length];
+            }
+
             for (int i = 0; i < q_texts.length; i++) {
                 mQuestions[i] = new Question(q_texts[i], q_answers[i]);
             }
+        } else {
+            Log.d(TAG, "fillQuestionsTable: q_texts.length != q_answers.length");
+            return false;
         }
+
+        return true;
     }
 
     private void showToast(int resId) {
