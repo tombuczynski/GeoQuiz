@@ -14,5 +14,7 @@
         <item>Najdłuższa rzeka w Polsce to Wisła</item>
         <item>Paryż leży w Azji</item>
     </string-array>
+    <string name="quiz_finish">Quiz zakończony</string>
+    <string name="result_percent">Wynik: %d%%</string>
 
 </resources>

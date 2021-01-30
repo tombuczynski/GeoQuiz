@@ -1,8 +1,10 @@
 package com.bignerdranch.android.geoquiz;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,13 +12,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
-    public static final String KEY_INDEX = "INDEX";
+    private static final String KEY_INDEX = "INDEX";
+    private static final String KEY_ANSWERS = "ANSWERS";
+
+    private static final int NO_ANSWER = 0;
+    private static final int GOOD_ANSWER = 1;
+    private static final int WRONG_ANSWER = 2;
 
     private Question[] mQuestions = null;
     private byte[] mAnswers = null; // 0=no answer(default), 1=good answer, 2 = wrong answer
     private int mCurrentIndex = 0;
+    public Button mButtonFalse;
+    public Button mButtonTrue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +38,7 @@ public class QuizActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+            mAnswers = savedInstanceState.getByteArray(KEY_ANSWERS);
         }
 
         if (! fillQuestionsTable()) {
@@ -35,8 +47,8 @@ public class QuizActivity extends AppCompatActivity {
 
         buttonsHandler();
 
-
         questionUpdate();
+        checkResult();
     }
 
     @Override
@@ -50,7 +62,8 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "onSaveInstanceState: called");
 
-        outState.putInt(KEY_INDEX, mCurrentIndex);;
+        outState.putInt(KEY_INDEX, mCurrentIndex);
+        outState.putByteArray(KEY_ANSWERS, mAnswers);
     }
 
     @Override
@@ -85,20 +98,57 @@ public class QuizActivity extends AppCompatActivity {
         questionText.setText(mQuestions[mCurrentIndex].getQuestionText());
     }
 
+    private void clearResult() {
+        Arrays.fill(mAnswers, (byte) NO_ANSWER);
+
+        mButtonFalse.setEnabled(true);
+        mButtonTrue.setEnabled(true);
+    }
+
+    /**
+     *
+     * @return -1 - not all questions answered; >= 0 - [%} of good answers
+     */
+    private int checkResult() {
+        boolean noAnswer = mAnswers[mCurrentIndex] == NO_ANSWER;
+        mButtonFalse.setEnabled(noAnswer);
+        mButtonTrue.setEnabled(noAnswer);
+
+        int goodAnswers = 0;
+        for (byte answer : mAnswers) {
+            if (answer == NO_ANSWER)
+                return -1;
+
+            if (answer == GOOD_ANSWER) {
+                goodAnswers++;
+            }
+        }
+
+        return (goodAnswers * 100) / mAnswers.length;
+    }
+
+    private void recordAnswer(boolean goodAnswer) {
+        mAnswers[mCurrentIndex] = (byte)(goodAnswer ? GOOD_ANSWER : WRONG_ANSWER);
+
+        int result = checkResult();
+        if (result >=0)
+            showResult(result);
+    }
+
     private void buttonsHandler() {
-        Button buttonFalse = findViewById(R.id.button_false);
-        buttonFalse.setOnClickListener(new View.OnClickListener() {
+        mButtonFalse = findViewById(R.id.button_false);
+        mButtonFalse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCorrectAnswer(false);
+                showAnswer(false);
             }
         });
 
-        Button buttonTrue = findViewById(R.id.button_true);
-        buttonTrue.setOnClickListener(new View.OnClickListener() {
+        mButtonTrue = findViewById(R.id.button_true);
+        mButtonTrue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCorrectAnswer(true);
+                showAnswer(true);
             }
         });
 
@@ -128,18 +178,12 @@ public class QuizActivity extends AppCompatActivity {
 
     }
 
-    private void showCorrectAnswer(boolean answer) {
-        if (mQuestions[mCurrentIndex].checkAnswer(answer))
-            showToast(R.string.good_answer_text);
-        else
-            showToast(R.string.wrong_answer_text);
-    }
-
     private void nextQuestion() {
         if (++mCurrentIndex >= mQuestions.length)
             mCurrentIndex = 0;
 
         questionUpdate();
+        checkResult();
     }
 
     private void prevQuestion() {
@@ -147,6 +191,7 @@ public class QuizActivity extends AppCompatActivity {
             mCurrentIndex = mQuestions.length - 1;
 
         questionUpdate();
+        checkResult();
     }
 
     private boolean fillQuestionsTable() {
@@ -168,6 +213,38 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private void showAnswer(boolean answer) {
+        if (mQuestions[mCurrentIndex].checkAnswer(answer)) {
+            showToast(R.string.good_answer_text);
+            recordAnswer(true);
+        } else {
+            showToast(R.string.wrong_answer_text);
+            recordAnswer(false);
+        }
+    }
+
+    private void showResult(int result) {
+        String msg = getResources().getString(R.string.result_percent, result);
+
+        AlertDialog.Builder dlgB = new AlertDialog.Builder(this);
+        dlgB.setTitle(R.string.quiz_finish)
+            .setMessage(msg)
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            })
+            .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    clearResult();
+                }
+            });
+
+        dlgB.create().show();
     }
 
     private void showToast(int resId) {
