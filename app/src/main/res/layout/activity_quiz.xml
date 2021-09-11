@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:padding="20dp"
-        tools:text="Question"
-        tools:ignore="KeyboardInaccessibleWidget" />
+        tools:ignore="KeyboardInaccessibleWidget"
+        tools:text="Question" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -41,6 +41,12 @@
             tools:ignore="ButtonStyle" />
     </LinearLayout>
 
+    <Button
+        android:id="@+id/button_show_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_answer" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,8 +58,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:contentDescription="@string/prev_question_button"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
             android:src="@drawable/arrow_left"
-            tools:ignore="ButtonStyle,RtlHardcoded" />
+            tools:ignore="ButtonStyle,RtlHardcoded,ImageContrastCheck" />
 
         <ImageButton
             android:id="@+id/button_next"
@@ -61,8 +69,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:contentDescription="@string/next_question_button"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
             android:src="@drawable/arrow_right"
-            tools:ignore="ButtonStyle,RtlHardcoded" />
+            tools:ignore="ButtonStyle,RtlHardcoded,ImageContrastCheck" />
 
     </LinearLayout>
 

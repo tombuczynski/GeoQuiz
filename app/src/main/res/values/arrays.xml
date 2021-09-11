@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="question_answers">
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+    </integer-array>
+
+    <string-array name="question_texts">
+        <item>Capital of China is Beijing</item>
+        <item>Capital of Poland is Gliwice</item>
+        <item>Longest river of Poland is Vistula</item>
+        <item>Paris is in Asia</item>
+    </string-array>
+</resources>

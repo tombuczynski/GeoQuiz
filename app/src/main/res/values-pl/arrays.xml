@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="question_texts">
+        <item>Stolicą Chin jest Pekin</item>
+        <item>Stolicą Polski są Gliwice</item>
+        <item>Najdłuższa rzeka w Polsce to Wisła</item>
+        <item>Paryż leży w Azji</item>
+    </string-array>
+</resources>

@@ -1,10 +1,12 @@
 package com.bignerdranch.android.geoquiz;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,8 +18,8 @@ import java.util.Arrays;
 
 public class QuizActivity extends AppCompatActivity {
     private static final String TAG = "QuizActivity";
-    private static final String KEY_INDEX = "INDEX";
-    private static final String KEY_ANSWERS = "ANSWERS";
+    private static final String EXTRA_INDEX = "INDEX";
+    private static final String EXTRA_ANSWERS = "ANSWERS";
 
     private static final int NO_ANSWER = 0;
     private static final int GOOD_ANSWER = 1;
@@ -28,6 +30,15 @@ public class QuizActivity extends AppCompatActivity {
     private int mCurrentIndex = 0;
     public Button mButtonFalse;
     public Button mButtonTrue;
+    public TextView mQuestionText;
+
+    private final ActivityResultLauncher<Intent> mStartHintActivity = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                int code = result.getResultCode();
+                Intent data = result.getData();
+
+                Log.d(TAG, "HintActivity result code = " + code);
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +48,15 @@ public class QuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
 
         if (savedInstanceState != null) {
-            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
-            mAnswers = savedInstanceState.getByteArray(KEY_ANSWERS);
+            mCurrentIndex = savedInstanceState.getInt(EXTRA_INDEX, 0);
+            mAnswers = savedInstanceState.getByteArray(EXTRA_ANSWERS);
         }
 
         if (! fillQuestionsTable()) {
             finish();
         }
+
+        mQuestionText = findViewById(R.id.textview_question);
 
         buttonsHandler();
 
@@ -62,8 +75,8 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.d(TAG, "onSaveInstanceState: called");
 
-        outState.putInt(KEY_INDEX, mCurrentIndex);
-        outState.putByteArray(KEY_ANSWERS, mAnswers);
+        outState.putInt(EXTRA_INDEX, mCurrentIndex);
+        outState.putByteArray(EXTRA_ANSWERS, mAnswers);
     }
 
     @Override
@@ -94,8 +107,8 @@ public class QuizActivity extends AppCompatActivity {
         if (mCurrentIndex >= mQuestions.length)
             return;
 
-        TextView questionText = findViewById(R.id.textview_question);
-        questionText.setText(mQuestions[mCurrentIndex].getQuestionText());
+        //Log.d(TAG, "questionUpdate", new RuntimeException("Break"));
+        mQuestionText.setText(mQuestions[mCurrentIndex].getQuestionText());
     }
 
     private void clearResult() {
@@ -137,45 +150,29 @@ public class QuizActivity extends AppCompatActivity {
 
     private void buttonsHandler() {
         mButtonFalse = findViewById(R.id.button_false);
-        mButtonFalse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAnswer(false);
-            }
-        });
+        mButtonFalse.setOnClickListener(v -> showAnswer(false));
 
         mButtonTrue = findViewById(R.id.button_true);
-        mButtonTrue.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAnswer(true);
-            }
-        });
+        mButtonTrue.setOnClickListener(v -> showAnswer(true));
 
         View buttonPrev = findViewById(R.id.button_prev);
-        buttonPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                prevQuestion();
-            }
-        });
+        buttonPrev.setOnClickListener(v -> prevQuestion());
 
         View buttonNext = findViewById(R.id.button_next);
-        buttonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextQuestion();
-            }
-        });
+        buttonNext.setOnClickListener(v -> nextQuestion());
 
         TextView tvQuestion = findViewById(R.id.textview_question);
-        tvQuestion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nextQuestion();
-            }
-        });
+        tvQuestion.setOnClickListener(v -> nextQuestion());
 
+        View buttonShowHint = findViewById(R.id.button_show_hint);
+        buttonShowHint.setOnClickListener(v -> startHintActivity(mQuestions[mCurrentIndex].isAnswerTrue()));
+    }
+
+    private void startHintActivity(boolean isAnswerTrue) {
+        Intent intent = new Intent(this, HintActivity.class);
+        intent.putExtra(HintActivity.EXTRA_ANSWER_IS_TRUE, isAnswerTrue);
+
+        mStartHintActivity.launch(intent);
     }
 
     private void nextQuestion() {
@@ -231,18 +228,8 @@ public class QuizActivity extends AppCompatActivity {
         AlertDialog.Builder dlgB = new AlertDialog.Builder(this);
         dlgB.setTitle(R.string.quiz_finish)
             .setMessage(msg)
-            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            })
-            .setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    clearResult();
-                }
-            });
+            .setPositiveButton("OK", (dialog, which) -> { })
+            .setOnDismissListener(dialog -> clearResult());
 
         dlgB.create().show();
     }

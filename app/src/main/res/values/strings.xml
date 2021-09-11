@@ -1,24 +1,15 @@
-<resources>
-    <string name="app_name">GeoQuiz</string>
-    <string name="answer_true_button">True</string>
-    <string name="answer_false_button">False</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Geo Quiz</string>
+    <string name="answer_true_button">TRUE</string>
+    <string name="answer_false_button">FALSE</string>
     <string name="next_question_button">Next</string>
     <string name="wrong_answer_text">Wrong answer !</string>
     <string name="good_answer_text">Good answer !</string>
     <string name="prev_question_button">Prev</string>
     <string name="quiz_finish">Quiz finished</string>
-    <string name="result_percent">Result: %d%%</string>
-
-    <string-array name="question_texts">
-        <item>Capital of China is Beijing</item>
-        <item>Capital of Poland is Gliwice</item>
-        <item>Longest river of Poland is Vistula</item>
-        <item>Paris is in Asia</item>
-    </string-array>
-    <integer-array name="question_answers">
-        <item>1</item>
-        <item>0</item>
-        <item>1</item>
-        <item>0</item>
-    </integer-array>
+    <string name="result_percent">Result: <xliff:g id="result_percent">%d%%</xliff:g></string>
+    <string name="show_answer">Show answer</string>
+    <string name="hint_warning">Do You really need a hint ?!</string>
+    <string name="show_hint">Show hint !</string>
+    <string name="hint_answer">Answer is: </string>
 </resources>

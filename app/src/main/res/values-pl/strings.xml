@@ -1,20 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">GeoQuiz</string>
-    <string name="answer_true_button">Prawda</string>
-    <string name="answer_false_button">Fałsz</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Geo Quiz</string>
+    <string name="answer_true_button">PRAWDA</string>
+    <string name="answer_false_button">FAŁSZ</string>
     <string name="next_question_button">Następny</string>
     <string name="prev_question_button">Poprzedni</string>
     <string name="good_answer_text">Dobra odpowiedź !</string>
     <string name="wrong_answer_text">Zła odpowiedź !</string>
-
-    <string-array name="question_texts">
-        <item>Stolicą Chin jest Pekin</item>
-        <item>Stolicą Polski są Gliwice</item>
-        <item>Najdłuższa rzeka w Polsce to Wisła</item>
-        <item>Paryż leży w Azji</item>
-    </string-array>
     <string name="quiz_finish">Quiz zakończony</string>
-    <string name="result_percent">Wynik: %d%%</string>
+    <string name="result_percent">Wynik: <xliff:g id="result_percent">%d%%</xliff:g></string>
+    <string name="show_answer">Pokaż odpowiedź</string>
+    <string name="hint_warning">Naprawdę chcesz podpowiedzi ?!</string>
+    <string name="show_hint">Pokaż !</string>
+    <string name="hint_answer">"Poprawna odpowiedź: "</string>
 
 </resources>
