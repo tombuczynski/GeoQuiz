@@ -9,6 +9,7 @@
     tools:context=".HintActivity">
 
     <TextView
+        android:id="@+id/textview_warning"
         style="@style/textMediumBlack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

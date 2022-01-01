@@ -12,4 +12,5 @@
     <string name="hint_warning">Do You really need a hint ?!</string>
     <string name="show_hint">Show hint !</string>
     <string name="hint_answer">Answer is: </string>
+    <string name="hint_used">But you used the hint !!</string>
 </resources>

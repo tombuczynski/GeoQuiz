@@ -17,6 +17,7 @@ import android.widget.Toast;
 import java.util.Arrays;
 
 public class QuizActivity extends AppCompatActivity {
+
     private static final String TAG = "QuizActivity";
     private static final String EXTRA_INDEX = "INDEX";
     private static final String EXTRA_ANSWERS = "ANSWERS";
@@ -24,18 +25,27 @@ public class QuizActivity extends AppCompatActivity {
     private static final int NO_ANSWER = 0;
     private static final int GOOD_ANSWER = 1;
     private static final int WRONG_ANSWER = 2;
+    private static final int HINT_USED_FOR_ANSWER = 3;
 
     private Question[] mQuestions = null;
-    private byte[] mAnswers = null; // 0=no answer(default), 1=good answer, 2 = wrong answer
+    private byte[] mAnswers = null; // 0=no answer(default), 1=good answer, 2 = wrong answer, 3 = hint used
     private int mCurrentIndex = 0;
-    public Button mButtonFalse;
-    public Button mButtonTrue;
-    public TextView mQuestionText;
+
+    private Button mButtonFalse;
+    private Button mButtonTrue;
+    private TextView mQuestionText;
 
     private final ActivityResultLauncher<Intent> mStartHintActivity = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 int code = result.getResultCode();
                 Intent data = result.getData();
+
+                if (code == RESULT_OK && data != null) {
+                    boolean hintUsed = data.getBooleanExtra(HintActivity.EXTRA_HINT_USED, false);
+
+                    if (hintUsed && isNoCurrentAnswer())
+                        mAnswers[mCurrentIndex] = HINT_USED_FOR_ANSWER;
+                }
 
                 Log.d(TAG, "HintActivity result code = " + code);
             });
@@ -123,13 +133,13 @@ public class QuizActivity extends AppCompatActivity {
      * @return -1 - not all questions answered; >= 0 - [%} of good answers
      */
     private int checkResult() {
-        boolean noAnswer = mAnswers[mCurrentIndex] == NO_ANSWER;
+        boolean noAnswer = isNoCurrentAnswer();
         mButtonFalse.setEnabled(noAnswer);
         mButtonTrue.setEnabled(noAnswer);
 
         int goodAnswers = 0;
         for (byte answer : mAnswers) {
-            if (answer == NO_ANSWER)
+            if (isNoAnswer(answer))
                 return -1;
 
             if (answer == GOOD_ANSWER) {
@@ -138,6 +148,18 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         return (goodAnswers * 100) / mAnswers.length;
+    }
+
+    private boolean isNoCurrentAnswer() {
+        return isNoAnswer(mAnswers[mCurrentIndex]);
+    }
+
+    private boolean isNoAnswer(byte answer) {
+        return (answer == NO_ANSWER) || (answer == HINT_USED_FOR_ANSWER);
+    }
+
+    private boolean isCurrentAnswerTrue() {
+        return mQuestions[mCurrentIndex].isAnswerTrue();
     }
 
     private void recordAnswer(boolean goodAnswer) {
@@ -165,12 +187,13 @@ public class QuizActivity extends AppCompatActivity {
         tvQuestion.setOnClickListener(v -> nextQuestion());
 
         View buttonShowHint = findViewById(R.id.button_show_hint);
-        buttonShowHint.setOnClickListener(v -> startHintActivity(mQuestions[mCurrentIndex].isAnswerTrue()));
+        buttonShowHint.setOnClickListener(v -> startHintActivity());
     }
 
-    private void startHintActivity(boolean isAnswerTrue) {
+    private void startHintActivity() {
         Intent intent = new Intent(this, HintActivity.class);
-        intent.putExtra(HintActivity.EXTRA_ANSWER_IS_TRUE, isAnswerTrue);
+        intent.putExtra(HintActivity.EXTRA_ANSWER_IS_TRUE, isCurrentAnswerTrue());
+        intent.putExtra(HintActivity.EXTRA_ALREADY_ANSWERED, ! isNoCurrentAnswer());
 
         mStartHintActivity.launch(intent);
     }
@@ -214,7 +237,11 @@ public class QuizActivity extends AppCompatActivity {
 
     private void showAnswer(boolean answer) {
         if (mQuestions[mCurrentIndex].checkAnswer(answer)) {
-            showToast(R.string.good_answer_text);
+            String answer_str = getString(R.string.good_answer_text) + " ";
+            if (mAnswers[mCurrentIndex] == HINT_USED_FOR_ANSWER)
+                answer_str += getString(R.string.hint_used);
+
+            showToast(answer_str);
             recordAnswer(true);
         } else {
             showToast(R.string.wrong_answer_text);
@@ -223,7 +250,7 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void showResult(int result) {
-        String msg = getResources().getString(R.string.result_percent, result);
+        String msg = getString(R.string.result_percent, result);
 
         AlertDialog.Builder dlgB = new AlertDialog.Builder(this);
         dlgB.setTitle(R.string.quiz_finish)
@@ -236,5 +263,8 @@ public class QuizActivity extends AppCompatActivity {
 
     private void showToast(int resId) {
         Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
+    }
+    private void showToast(String str) {
+        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
     }
 }

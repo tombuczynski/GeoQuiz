@@ -5,6 +5,10 @@
         <item>0</item>
         <item>1</item>
         <item>0</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
     </integer-array>
 
     <string-array name="question_texts">
@@ -12,5 +16,9 @@
         <item>Capital of Poland is Gliwice</item>
         <item>Longest river of Poland is Vistula</item>
         <item>Paris is in Asia</item>
+        <item>World\'s longest river is Nile</item>
+        <item>Largest city in the World is Warsaw</item>
+        <item>Largest terrestrial sea is Philippine Sea</item>
+        <item>Highest mountains on Earth is K2</item>
     </string-array>
 </resources>

@@ -12,5 +12,6 @@
     <string name="hint_warning">Naprawdę chcesz podpowiedzi ?!</string>
     <string name="show_hint">Pokaż !</string>
     <string name="hint_answer">"Poprawna odpowiedź: "</string>
+    <string name="hint_used">"Ale wykorzystałeś podpowiedź !!"</string>
 
 </resources>
