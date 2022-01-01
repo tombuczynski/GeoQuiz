@@ -255,10 +255,10 @@ public class QuizActivity extends AppCompatActivity {
         AlertDialog.Builder dlgB = new AlertDialog.Builder(this);
         dlgB.setTitle(R.string.quiz_finish)
             .setMessage(msg)
-            .setPositiveButton("OK", (dialog, which) -> { })
-            .setOnDismissListener(dialog -> clearResult());
+            .setPositiveButton("OK", (dialog, which) -> { });
 
         dlgB.create().show();
+        clearResult();
     }
 
     private void showToast(int resId) {
