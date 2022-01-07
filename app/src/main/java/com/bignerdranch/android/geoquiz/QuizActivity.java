@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,8 @@ public class QuizActivity extends AppCompatActivity {
     private static final String EXTRA_INDEX = "INDEX";
     private static final String EXTRA_ANSWERS = "ANSWERS";
 
+    private static final Integer HINTS_AVAILABLE = 5;
+
     private static final int NO_ANSWER = 0;
     private static final int GOOD_ANSWER = 1;
     private static final int WRONG_ANSWER = 2;
@@ -30,6 +33,7 @@ public class QuizActivity extends AppCompatActivity {
     private Question[] mQuestions = null;
     private byte[] mAnswers = null; // 0=no answer(default), 1=good answer, 2 = wrong answer, 3 = hint used
     private int mCurrentIndex = 0;
+    private int mHintsLeftCnt = HINTS_AVAILABLE;
 
     private Button mButtonFalse;
     private Button mButtonTrue;
@@ -43,8 +47,12 @@ public class QuizActivity extends AppCompatActivity {
                 if (code == RESULT_OK && data != null) {
                     boolean hintUsed = data.getBooleanExtra(HintActivity.EXTRA_HINT_USED, false);
 
-                    if (hintUsed && isNoCurrentAnswer())
+                    if (hintUsed && isNoCurrentAnswer()) {
                         mAnswers[mCurrentIndex] = HINT_USED_FOR_ANSWER;
+
+                        if (mHintsLeftCnt > 0)
+                            mHintsLeftCnt--;
+                    }
                 }
 
                 Log.d(TAG, "HintActivity result code = " + code);
@@ -55,11 +63,15 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: called, " + (savedInstanceState != null ? "savedInstanceState != null" : "savedInstanceState == null"));
 
+        Log.d(TAG,  String.format("Android version: %s, API level: %d", Build.VERSION.RELEASE, Build.VERSION.SDK_INT));
+
         setContentView(R.layout.activity_quiz);
 
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(EXTRA_INDEX, 0);
             mAnswers = savedInstanceState.getByteArray(EXTRA_ANSWERS);
+
+            mHintsLeftCnt = savedInstanceState.getInt(HintActivity.EXTRA_HINTS_LEFT_CNT, HINTS_AVAILABLE);
         }
 
         if (! fillQuestionsTable()) {
@@ -87,6 +99,8 @@ public class QuizActivity extends AppCompatActivity {
 
         outState.putInt(EXTRA_INDEX, mCurrentIndex);
         outState.putByteArray(EXTRA_ANSWERS, mAnswers);
+
+        outState.putInt(HintActivity.EXTRA_HINTS_LEFT_CNT, mHintsLeftCnt);
     }
 
     @Override
@@ -194,6 +208,7 @@ public class QuizActivity extends AppCompatActivity {
         Intent intent = new Intent(this, HintActivity.class);
         intent.putExtra(HintActivity.EXTRA_ANSWER_IS_TRUE, isCurrentAnswerTrue());
         intent.putExtra(HintActivity.EXTRA_ALREADY_ANSWERED, ! isNoCurrentAnswer());
+        intent.putExtra(HintActivity.EXTRA_HINTS_LEFT_CNT, mHintsLeftCnt);
 
         mStartHintActivity.launch(intent);
     }

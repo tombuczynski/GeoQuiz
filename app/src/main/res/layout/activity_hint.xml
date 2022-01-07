@@ -32,4 +32,15 @@
         android:layout_height="wrap_content"
         android:text="@string/show_hint" />
 
+    <TextView
+        android:id="@+id/textview_hints_left"
+        style="@style/textMediumBlack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:padding="20dp"
+        android:textStyle="italic"
+        tools:ignore="KeyboardInaccessibleWidget"
+        tools:text="0 hints left" />
+
 </LinearLayout>
