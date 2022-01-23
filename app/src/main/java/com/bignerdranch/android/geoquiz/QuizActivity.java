@@ -127,6 +127,11 @@ public class QuizActivity extends AppCompatActivity {
         Log.d(TAG, "onPause: called");
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     private void questionUpdate() {
         if (mCurrentIndex >= mQuestions.length)
             return;
