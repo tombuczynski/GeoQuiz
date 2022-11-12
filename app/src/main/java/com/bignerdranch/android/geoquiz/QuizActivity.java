@@ -7,11 +7,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,6 +84,18 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         mQuestionText = findViewById(R.id.textview_question);
+
+        LinearLayout ll = findViewById(R.id.buttons_layout);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
+        Resources r = getResources();
+        DisplayMetrics m = r.getDisplayMetrics();
+
+        int margin = Math.round(5.0f * m.density);
+        params.setMargins(margin,margin,margin,margin);
+        Button help = new Button(this);
+        help.setLayoutParams(params);
+        help.setText(R.string.help_button);
+        ll.addView(help);
 
         buttonsHandler();
 
@@ -285,6 +302,8 @@ public class QuizActivity extends AppCompatActivity {
         Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
     }
     private void showToast(String str) {
-        Toast.makeText(this, str, Toast.LENGTH_SHORT).show();
+        Toast t = Toast.makeText(this, str, Toast.LENGTH_SHORT);
+        t.setGravity(Gravity.TOP, 0, 100);
+        t.show();
     }
 }

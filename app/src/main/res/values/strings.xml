@@ -13,6 +13,7 @@
     <string name="show_hint">Show hint !</string>
     <string name="hint_answer">Answer is: </string>
     <string name="hint_used">But you used the hint !!</string>
+    <string name="help_button">Help</string>
 
     <plurals name="hints_left">
         <item quantity="one">%d hint left</item>
