@@ -1,7 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Geo Quiz</string>
-    <string name="answer_true_button">TRUE</string>
-    <string name="answer_false_button">FALSE</string>
+    <string name="answer_true_button">YES</string>
+    <string name="answer_false_button">NO</string>
     <string name="next_question_button">Next</string>
     <string name="wrong_answer_text">Wrong answer !</string>
     <string name="good_answer_text">Good answer !</string>

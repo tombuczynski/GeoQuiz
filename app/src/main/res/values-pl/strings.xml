@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Geo Quiz</string>
-    <string name="answer_true_button">PRAWDA</string>
-    <string name="answer_false_button">FAŁSZ</string>
+    <string name="answer_true_button">TAK</string>
+    <string name="answer_false_button">NIE</string>
     <string name="next_question_button">Następny</string>
     <string name="prev_question_button">Poprzedni</string>
     <string name="good_answer_text">Dobra odpowiedź !</string>
